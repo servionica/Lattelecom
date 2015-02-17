@@ -461,7 +461,7 @@ Ext.onReady(function(){
                 }
             },{
                 xtype: 'button',
-                x: 60, y: 0,
+                x: 61, y: 0,
                 margin: '10 0 0 10',
                 text: 'Power-off',
                 handler: function() {
@@ -469,7 +469,7 @@ Ext.onReady(function(){
                 }
             },{
                 xtype: 'button',
-                x: 140, y: 0,
+                x: 136, y: 0,
                 margin: '10 0 0 10',
                 text: 'Suspend',
                 handler: function() {
@@ -477,7 +477,7 @@ Ext.onReady(function(){
                 }
             },{
                 xtype: 'button',
-                x: 210, y: 0,
+                x: 208, y: 0,
                 margin: '10 0 0 10',
                 text: 'Restart',
                 handler: function() {
@@ -485,7 +485,7 @@ Ext.onReady(function(){
                 }
             },{
                 xtype: 'button',
-                x: 270, y: 0,
+                x: 272, y: 0,
                 margin: '10 0 0 10',
                 text: 'Console',
                 handler: function() {
@@ -499,17 +499,19 @@ Ext.onReady(function(){
                 handler: function() {
                     alert('You clicked the button!');
                 }
-            },            {
+            },
+            // {
+            //     xtype: 'button',
+            //     x: 600, y: 0,
+            //     margin: '10 0 0 10',
+            //     text: 'Migrate',
+            //     handler: function() {
+            //         alert('You clicked the button!');
+            //     }
+            // },
+            {
                 xtype: 'button',
-                x: 390, y: 0,
-                margin: '10 0 0 100',
-                text: 'Migrate',
-                handler: function() {
-                    alert('You clicked the button!');
-                }
-            },{
-                xtype: 'button',
-                x: 550, y: 0,
+                x: 740, y: 0,
                 margin: '10 0 0 10',
                 text: 'Destroy',
                 handler: function() {
@@ -584,7 +586,7 @@ Ext.onReady(function(){
         layout: 'border',
         items: [{
             region: 'north',
-            html: '<div style="background-color: #41709F;border-bottom: 1px solid #121b28; height: 52px; margin: 0px; width: 100%; right: auto; left: 0px; top: 0px;" id="app-header"><div id="app-header-innerCt"  style="width: 100%; height: 51px;"><div id="app-header-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 100%;"><div class="x-component  x-box-item x-component-default" id="app-header-logo" style="margin: 0px; right: auto; left: 0px; top: 13px;"></div><div class="x-component  x-box-item x-component-default" id="app-header-title" style="margin: 0px; right: auto; left: 40px; width: 1468px; top: 5px;">Ext JS Kitchen Sink</div><div class="x-container  x-box-item x-container-default x-box-layout-ct" style="margin: 0px; right: auto; left: 1508px; top: 15px;" id="theme-switcher-btn"><div id="theme-switcher-btn-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 27px; height: 22px;"><div id="theme-switcher-btn-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 27px;"><div class="x-component  ks-theme-switcher x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; top: 0px;" id="theme-switcher"></div></div></div></div></div></div></div>',
+            html: '<div style="background-color: #424242;border-bottom: 1px solid #121b28; height: 52px; margin: 0px; width: 100%; right: auto; left: 0px; top: 0px;" id="app-header"><div id="app-header-innerCt"  style="width: 100%; height: 51px;"><div id="app-header-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 100%;"><div class="x-component  x-box-item x-component-default" id="app-header-logo" style="margin: 0px; right: auto; left: 0px; top: 13px;"></div><div class="x-component  x-box-item x-component-default" id="app-header-title" style="margin: 0px; right: auto; left: 40px; width: 1468px; top: 5px;">Ext JS Kitchen Sink</div><div class="x-container  x-box-item x-container-default x-box-layout-ct" style="margin: 0px; right: auto; left: 1508px; top: 15px;" id="theme-switcher-btn"><div id="theme-switcher-btn-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 27px; height: 22px;"><div id="theme-switcher-btn-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 27px;"><div class="x-component  ks-theme-switcher x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; top: 0px;" id="theme-switcher"></div></div></div></div></div></div></div>',
             border: false,
             margin: '0 0 5 0',
         }, {
