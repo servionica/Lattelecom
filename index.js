@@ -295,7 +295,7 @@ Ext.onReady(function(){
         bodyPadding: 5,
         width: 800,
         x: 10, y: 50,
-        layout: 'form',
+        layout: 'vbox',
         defaultType: 'textfield',
         items: [{
             fieldLabel: 'Name',
@@ -333,44 +333,64 @@ Ext.onReady(function(){
         },{
             xtype: 'slider',
             fieldLabel: 'vCPU',
+            width: 300,
             increment: 1,
             minValue: 0,
             maxValue: 12,
         },{
             xtype: 'slider',
             decimalPrecision: 1,
+            width: 300,
             fieldLabel: 'RAM, Gb',
             increment: 0.5,
             minValue: 0.5,
             maxValue: 32.0,
         },{
-            xtype: 'combobox',
-            fieldLabel: 'Disk type',
-            store: disksStore,
-            queryMode: 'local',
-            displayField: 'name',
-            valueField: 'num',
-            allowBlank: false
-        },{
-            xtype: 'slider',
-            fieldLabel: 'HDD, Gb',
-            increment: 50,
-            minValue: 50,
-            maxValue: 1000,
+            xtype: 'fieldcontainer',
+            layout: 'hbox',
+            width: 700,
+            items:
+            [{
+                xtype: 'combobox',
+                fieldLabel: 'Disk type',
+                store: disksStore,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'num',
+                allowBlank: false,
+                flex: 1
+            },{
+                xtype: 'slider',
+                fieldLabel: 'HDD, Gb',
+                increment: 50,
+                minValue: 50,
+                maxValue: 1000,
+                flex: 1,
+                padding: '0, 0, 0, 10'
+            },{
+                xtype: 'button',
+                text: '-',
+                margin: '0, 0, 0, 30',
+                hidden: true,
+                handler: function() {
+                }
+            }]
         },{
             xtype: 'button',
             text: '+ HDD',
+            margin: '0, 0, 0, 700',
             handler: function() {
             }
         },{
             xtype: 'slider',
             fieldLabel: 'Bandwidth, Mbps',
+            width: 300,
             increment: 1,
             minValue: 1,
             maxValue: 100,
         },{
             xtype: 'form',
-            width: 200,
+            width: 300,
             items:[
                 {
                     xtype: 'container',
@@ -378,27 +398,19 @@ Ext.onReady(function(){
                     defaultType: 'checkboxfield',
                     items: [
                         {
-                            boxLabel  : 'IPv4',
+                            boxLabel  : 'Public IPv4',
                             name      : 'ip',
                             checked   : true,
                             inputValue: '1',
-                            id        : 'checkbox1'
+                            id        : 'checkbox1',
+                            disabled: true,
                         }, {
-                            boxLabel  : 'IPv6',
+                            boxLabel  : 'Public IPv6',
                             name      : 'ip',
                             inputValue: '2',
-                            checked   : true,
-                            id        : 'checkbox2'
-                        }, {
-                            boxLabel  : 'IPv6',
-                            name      : 'ip',
-                            inputValue: '3',
-                            id        : 'checkbox3'
-                        },{
-                            boxLabel  : 'IPv6',
-                            name      : 'ip',
-                            inputValue: '4',
-                            id        : 'checkbox4'
+                            id        : 'checkbox2',
+                            padding: '0 0 0 30'
+
                         }
                     ]
                 }
