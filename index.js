@@ -1,6 +1,8 @@
 
 Ext.onReady(function(){
 
+    Ext.tip.QuickTipManager.init();
+
     var navigStore = Ext.create('Ext.data.Store', {
     fields: ['num', 'name'],
     data : [
@@ -46,9 +48,9 @@ Ext.onReady(function(){
     var disksStore = Ext.create('Ext.data.Store', {
         fields: ['num', 'name'],
         data : [
-            {"num":"1", "name":"SATA"},
-            {"num":"2", "name":"SAS"},
-            {"num":"3", "name":"SSD"}
+            {"num":"1", "name":"SATA", "info": "Information about SATA."},
+            {"num":"2", "name":"SAS", "info": "Information about SAS."},
+            {"num":"3", "name":"SSD", "info": "Information about SSD."}
         ]
     });
 
@@ -283,22 +285,21 @@ Ext.onReady(function(){
                 }]
     });
 
-    // softwareSelect = Ext.create('softwareSelect',{
-    //     itemId: 'softwareSelect'
-    // });
-
+    var price = 123;
 
     createForm = Ext.create('Ext.form.Panel', {
         hidden: true,
         title: 'Creation Form',
         itemId: 'createForm',
         scrollable: true,
+        autoScroll: true,
         bodyPadding: 5,
         width: 800,
-        //layout: 'vbox',
+        height: 620,
         defaultType: 'textfield',
         items: [{
             fieldLabel: 'Name',
+            width: 500,
             name: 'name',
             allowBlank: false
         },{
@@ -326,6 +327,7 @@ Ext.onReady(function(){
             xtype: 'combobox',
             fieldLabel: 'Operating System',
             store: operSysStore,
+            width: 500,
             queryMode: 'local',
             displayField: 'name',
             valueField: 'num',
@@ -333,25 +335,19 @@ Ext.onReady(function(){
         },{
             xtype: 'slider',
             fieldLabel: 'vCPU',
-            width: 300,
+            width: 500,
             increment: 1,
             minValue: 0,
             maxValue: 12,
         },{
             xtype: 'slider',
             decimalPrecision: 1,
-            width: 300,
+            width: 500,
             fieldLabel: 'RAM, Gb',
             increment: 0.5,
             minValue: 0.5,
             maxValue: 32.0,
         },{
-            // xtype: 'fieldcontainer',
-            // layout: 'auto',
-            // width: 700,
-            // height: 200,
-            // items:
-            // [{
                 xtype: 'fieldcontainer',
                 layout: 'hbox',
                 width: 700,
@@ -364,7 +360,12 @@ Ext.onReady(function(){
                     displayField: 'name',
                     valueField: 'num',
                     allowBlank: false,
-                    flex: 0.6
+                    flex: 0.6,
+                    listConfig: {
+                        getInnerTpl: function() {
+                            return '{name} <span data-qtip="{info}"><font color="#f2654a">?</font></span>';
+                        }
+                    }
                 },{
                     xtype: 'slider',
                     fieldLabel: 'HDD, Gb',
@@ -375,13 +376,11 @@ Ext.onReady(function(){
                     padding: '0, 0, 0, 20',
                     labelWidth: 60
                 }]
-            // }]
         },{
             xtype: 'container',
             layout: 'anchor',
             itemId: 'emptyContainer',
             width: 700,
-           // id: 'fieldcontainer1994K'
         },{
             xtype: 'button',
             text: '+ HDD',
@@ -390,7 +389,6 @@ Ext.onReady(function(){
               var t = Ext.create('Ext.form.FieldContainer', {
                     layout: 'hbox',
                     width: 700,
-                   // renderTo: 'fieldcontainer1994K',
                     items:
                     [{
                         xtype: 'combobox',
@@ -400,7 +398,12 @@ Ext.onReady(function(){
                         displayField: 'name',
                         valueField: 'num',
                         allowBlank: false,
-                        flex: 0.6
+                        flex: 0.6,
+                        listConfig: {
+                            getInnerTpl: function() {
+                                return '{name} <span data-qtip="{info}"><font color="#f2654a">?</font></span>';
+                            }
+                        }
                     },{
                         xtype: 'slider',
                         fieldLabel: 'HDD, Gb',
@@ -427,7 +430,7 @@ Ext.onReady(function(){
         },{
             xtype: 'slider',
             fieldLabel: 'Bandwidth, Mbps',
-            width: 300,
+            width: 500,
             increment: 1,
             minValue: 1,
             maxValue: 100,
@@ -460,7 +463,19 @@ Ext.onReady(function(){
             ]
         },{
             xtype: 'container',
-            items: [softwareSelect]
+            layout: 'hbox',
+            items: [softwareSelect,
+            {
+                xtype: 'container',
+                border: 2,
+                style: {
+                    borderColor: '#f2654a',
+                    borderStyle: 'solid'
+                },
+                html: '<font size="4">'+price+' €</font><br><font size="2">monthly</font>',
+                margin: '100, 100, 50, 250',
+                padding: '10, 10, 10, 10'
+            }]
         }
         
         
@@ -502,7 +517,7 @@ Ext.onReady(function(){
             // },
             layout: 'fit',
             scrollable: true,
-            width: 1000,
+            width: 800,
             renderTo: Ext.getBody(),
             border: 1,
             items: [
@@ -557,7 +572,7 @@ Ext.onReady(function(){
                     }
                 },{
                     xtype: 'button',
-                    margin: '10 0 0 500',
+                    margin: '10 0 0 309',
                     text: 'Destroy',
                     handler: function() {
                         alert('You clicked the button!');
