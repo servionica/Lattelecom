@@ -292,10 +292,10 @@ Ext.onReady(function(){
         hidden: true,
         title: 'Creation Form',
         itemId: 'createForm',
+        scrollable: true,
         bodyPadding: 5,
         width: 800,
-        x: 10, y: 50,
-        layout: 'vbox',
+        //layout: 'vbox',
         defaultType: 'textfield',
         items: [{
             fieldLabel: 'Name',
@@ -346,40 +346,83 @@ Ext.onReady(function(){
             minValue: 0.5,
             maxValue: 32.0,
         },{
-            xtype: 'fieldcontainer',
-            layout: 'hbox',
+            // xtype: 'fieldcontainer',
+            // layout: 'auto',
+            // width: 700,
+            // height: 200,
+            // items:
+            // [{
+                xtype: 'fieldcontainer',
+                layout: 'hbox',
+                width: 700,
+                items:
+                [{
+                    xtype: 'combobox',
+                    fieldLabel: 'Disk type',
+                    store: disksStore,
+                    queryMode: 'local',
+                    displayField: 'name',
+                    valueField: 'num',
+                    allowBlank: false,
+                    flex: 0.6
+                },{
+                    xtype: 'slider',
+                    fieldLabel: 'HDD, Gb',
+                    increment: 50,
+                    minValue: 50,
+                    maxValue: 1000,
+                    flex: 1.4,
+                    padding: '0, 0, 0, 20',
+                    labelWidth: 60
+                }]
+            // }]
+        },{
+            xtype: 'container',
+            layout: 'anchor',
+            itemId: 'emptyContainer',
             width: 700,
-            items:
-            [{
-                xtype: 'combobox',
-                fieldLabel: 'Disk type',
-                store: disksStore,
-                queryMode: 'local',
-                displayField: 'name',
-                valueField: 'num',
-                allowBlank: false,
-                flex: 1
-            },{
-                xtype: 'slider',
-                fieldLabel: 'HDD, Gb',
-                increment: 50,
-                minValue: 50,
-                maxValue: 1000,
-                flex: 1,
-                padding: '0, 0, 0, 10'
-            },{
-                xtype: 'button',
-                text: '-',
-                margin: '0, 0, 0, 30',
-                hidden: true,
-                handler: function() {
-                }
-            }]
+           // id: 'fieldcontainer1994K'
         },{
             xtype: 'button',
             text: '+ HDD',
             margin: '0, 0, 0, 700',
             handler: function() {
+              var t = Ext.create('Ext.form.FieldContainer', {
+                    layout: 'hbox',
+                    width: 700,
+                   // renderTo: 'fieldcontainer1994K',
+                    items:
+                    [{
+                        xtype: 'combobox',
+                        fieldLabel: 'Disk type',
+                        store: disksStore,
+                        queryMode: 'local',
+                        displayField: 'name',
+                        valueField: 'num',
+                        allowBlank: false,
+                        flex: 0.6
+                    },{
+                        xtype: 'slider',
+                        fieldLabel: 'HDD, Gb',
+                        increment: 50,
+                        minValue: 50,
+                        maxValue: 1000,
+                        flex: 1.4,
+                        padding: '0, 0, 0, 20',
+                        labelWidth: 60
+                    },{
+                        xtype: 'button',
+                        text: '-',
+                        margin: '0, 0, 0, 30',
+                        handler: function() {
+                            this.up().destroy()
+                        }
+                    }]
+                })
+                 createForm.getComponent('emptyContainer').insert(t);
+                
+
+
             }
         },{
             xtype: 'slider',
@@ -453,82 +496,73 @@ Ext.onReady(function(){
         extend: 'Ext.container.Container',
         initComponent: function(config){
         Ext.apply(this, {
-            layout: {
-                type: 'absolute',
-                // align: 'center'
-            },
+            // layout: {
+            //     type: 'absolute',
+            //     // align: 'center'
+            // },
+            layout: 'fit',
+            scrollable: true,
             width: 1000,
-            height: 1000,
             renderTo: Ext.getBody(),
             border: 1,
-            items: [{
-                xtype: 'button',
-                x: 0, y: 0,
-                margin: '10 0 0 10',
-                text: 'Create',
-                handler: function() {
-                    //alert('You clicked the button!');
-                    mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').show();
-
-                }
-            },{
-                xtype: 'button',
-                x: 61, y: 0,
-                margin: '10 0 0 10',
-                text: 'Power-off',
-                handler: function() {
-                    alert('You clicked the button!');
-                }
-            },{
-                xtype: 'button',
-                x: 136, y: 0,
-                margin: '10 0 0 10',
-                text: 'Suspend',
-                handler: function() {
-                    alert('You clicked the button!');
-                }
-            },{
-                xtype: 'button',
-                x: 208, y: 0,
-                margin: '10 0 0 10',
-                text: 'Restart',
-                handler: function() {
-                    alert('You clicked the button!');
-                }
-            },{
-                xtype: 'button',
-                x: 272, y: 0,
-                margin: '10 0 0 10',
-                text: 'Console',
-                handler: function() {
-                    alert('You clicked the button!');
-                }
-            },{
-                xtype: 'button',
-                x: 340, y: 0,
-                margin: '10 0 0 10',
-                text: 'Reconfig',
-                handler: function() {
-                    alert('You clicked the button!');
-                }
-            },
-            // {
-            //     xtype: 'button',
-            //     x: 600, y: 0,
-            //     margin: '10 0 0 10',
-            //     text: 'Migrate',
-            //     handler: function() {
-            //         alert('You clicked the button!');
-            //     }
-            // },
+            items: [
             {
-                xtype: 'button',
-                x: 740, y: 0,
-                margin: '10 0 0 10',
-                text: 'Destroy',
-                handler: function() {
-                    alert('You clicked the button!');
-                }
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0, 0, 10, 0',
+                items:[
+                {
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Create',
+                    handler: function() {
+                        //alert('You clicked the button!');
+                        mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').show();
+
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Power-off',
+                    handler: function() {
+                        alert('You clicked the button!');
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Suspend',
+                    handler: function() {
+                        alert('You clicked the button!');
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Restart',
+                    handler: function() {
+                        alert('You clicked the button!');
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Console',
+                    handler: function() {
+                        alert('You clicked the button!');
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Reconfig',
+                    handler: function() {
+                        alert('You clicked the button!');
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 500',
+                    text: 'Destroy',
+                    handler: function() {
+                        alert('You clicked the button!');
+                    }
+                }]
             },
                 createForm
             
@@ -613,6 +647,7 @@ Ext.onReady(function(){
             // could use a TreePanel or AccordionLayout for navigational items
         }, {
             region: 'center',
+            scrollable: true,
             itemId: 'centerReg',
             items: [virtServContainer, homeContainer]
         }]
