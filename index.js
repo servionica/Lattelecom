@@ -85,8 +85,8 @@ Ext.onReady(function(){
         renderTo: Ext.getBody(),
         listeners: {
             'change': function(combo, newValue){
-                console.log(newValue);
-                console.log(mainViewport.getComponent('westReg').getComponent('navigContainerVirtServ'));
+                // console.log(newValue);
+                // console.log(mainViewport.getComponent('westReg').getComponent('navigContainerVirtServ'));
                 if (newValue == '1'){
                     mainViewport.getComponent('westReg').getComponent('navigContainerVirtServ').show();
                     mainViewport.getComponent('westReg').getComponent('navigContainerDatac').hide();
@@ -254,6 +254,297 @@ Ext.onReady(function(){
     }
     });
 
+Ext.define('numberSliderNDD', {
+    extend: 'Ext.container.Container',
+    alias:'widget.numbersliderHDD',
+        config: {
+                    numberField: 'sliderfield1',
+                    sliderField: 'numberfield1'
+
+        },
+
+        xtype: 'numberslider',
+    initComponent: function() {
+    Ext.apply(this, {   
+                layout:'hbox',
+                width: 520,
+                items:[
+                    {
+                        xtype: 'sliderfield',
+                        numberField:this.numberField,
+                        itemId:this.sliderField,
+                        fieldLabel: 'HDD, Gb',
+                        // increment: 50,
+                        // minValue: 50,
+                        // maxValue: 1000,
+                        increment: 1,
+                        minValue: 0,
+                        maxValue: 19,
+                        width: 380,
+                        margin: '0 15 0 15',
+                        labelWidth: 60,
+                        dataVal1:[50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000],
+                        dataVal2:[20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200],
+                        listeners: {
+                                change: function (slider,newValue, thumb,eOpts,editMode){
+                                    // TODO через setMax/MinValue менять слайдер и поле
+                                    dataVal1 = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000];
+                                    dataVal2 = [20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200];
+                                    if(slider.numberField){
+                                        if (mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').getComponent('diskContainer').getComponent('diskCombo').getValue() < 3 )
+                                            this.ownerCt.getComponent(this.numberField).setValue(dataVal1[newValue])
+                                        else this.ownerCt.getComponent(this.numberField).setValue(dataVal2[newValue])
+                                    }
+
+                                }   
+                        },
+                        //////////
+                        tipText: function(thumb){
+                            // console.log(this)
+                            if(mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').getComponent('diskContainer').getComponent('diskCombo').getValue() < 3 ){
+                                return thumb.slider.dataVal1[thumb.value]
+                            }
+                            else {
+                                return thumb.slider.dataVal2[thumb.value]
+                            }
+                            
+                        }
+
+
+            },{
+                        xtype:'numberfield',
+                        width: 100,
+                        sliderField:this.sliderField,
+                        itemId:this.numberField,
+                        minValue: 50,
+                        maxValue: 1000,
+                        listeners: {
+                                change: function (numberfield,newValue){
+                                if(this.sliderField){
+                                    // TODO сцепить слайдер и поле. как в RAM
+                                    // if (mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').getComponent('diskContainer').getComponent('diskCombo').getValue() < 3 )
+                                    //     this.ownerCt.getComponent(this.sliderField).setValue(dataVal1[newValue])
+                                    // else this.ownerCt.getComponent(this.sliderField).setValue(dataVal2[newValue])
+                                }
+
+                        }
+
+                        }
+            }]
+
+    });
+    this.callParent();
+        }
+    });
+
+Ext.define('numberSliderVCPU', {
+    extend: 'Ext.container.Container',
+    alias:'widget.numbersliderVCPU',
+        config: {
+                    numberField: 'sliderfield1',
+                    sliderField: 'numberfield1'
+
+        },
+
+        xtype: 'numberslider',
+    initComponent: function() {
+    Ext.apply(this, {   
+                layout:'hbox',
+                width: 520,
+                items:[
+                    {
+                        xtype: 'sliderfield',
+                        numberField:this.numberField,
+                        itemId:this.sliderField,
+                        fieldLabel: 'vCPU',
+                        increment: 1,
+                        width: 380,
+                        minValue: 1,
+                        maxValue: 12,
+                        //margin: '0 0 0 0',
+                        labelWidth: 100,
+                        listeners: {
+                                change: function (slider,newValue, thumb,eOpts,editMode){
+                                    if(slider.numberField){
+                                            // console.log("look!", this.ownerCt);
+                                            this.ownerCt.getComponent(this.numberField).setValue(newValue);
+                                    }
+
+                                }   
+                        }
+
+                    },{
+                        xtype:'numberfield',
+                        width: 100,
+                        sliderField:this.sliderField,
+                        itemId:this.numberField,
+                        minValue: 1,
+                        maxValue: 12,
+                        margin: '0 0 0 15',
+                        listeners: {
+                                change: function (numberfield,newValue){
+                                if(this.sliderField){
+                                        this.ownerCt.getComponent(this.sliderField).setValue(newValue);
+                                        // console.log('HHH');
+                                }
+
+                        }
+
+                        }
+                        }
+                ]
+
+    });
+    this.callParent();
+        }
+    });
+
+Ext.define('numberSliderBand', {
+    extend: 'Ext.container.Container',
+    alias:'widget.numbersliderBand',
+        config: {
+                    numberField: 'sliderfield1',
+                    sliderField: 'numberfield1'
+
+        },
+
+        xtype: 'numberslider',
+    initComponent: function() {
+    Ext.apply(this, {   
+                layout:'hbox',
+                width: 520,
+                items:[
+                    {
+                        xtype: 'sliderfield',
+                        numberField:this.numberField,
+                        itemId:this.sliderField,
+                        fieldLabel: 'Bandwidth, Mbps',
+                        increment: 1,
+                        width: 380,
+                        minValue: 1,
+                        maxValue: 100,
+                        //margin: '0 0 0 0',
+                        labelWidth: 100,
+                        listeners: {
+                                change: function (slider,newValue, thumb,eOpts,editMode){
+                                    if(slider.numberField){
+                                            // console.log("look!", this.ownerCt);
+                                            this.ownerCt.getComponent(this.numberField).setValue(newValue);
+                                    }
+
+                                }   
+                        }
+
+                    },{
+                        xtype:'numberfield',
+                        width: 100,
+                        sliderField:this.sliderField,
+                        itemId:this.numberField,
+                        minValue: 1,
+                        maxValue: 100,
+                        margin: '0 0 0 15',
+                        listeners: {
+                                change: function (numberfield,newValue){
+                                if(this.sliderField){
+                                        this.ownerCt.getComponent(this.sliderField).setValue(newValue);
+                                        // console.log('HHH');
+                                }
+
+                        }
+
+                        }
+                        }
+                ]
+
+    });
+    this.callParent();
+        }
+    });
+
+
+
+Ext.define('numberSliderRAM', {
+    extend: 'Ext.container.Container',
+    alias:'widget.numbersliderRAM',
+        config: {
+                    numberField: 'sliderfield1',
+                    sliderField: 'numberfield1'
+
+        },
+
+        xtype: 'numberslider',
+    initComponent: function() {
+    Ext.apply(this, {   
+                layout:'hbox',
+                width: 520,
+                items:[
+                    {
+                        xtype: 'sliderfield',
+                        numberField:this.numberField,
+                        itemId:this.sliderField,
+                        fieldLabel: 'RAM, Mb',
+                        increment: 1,
+                        width: 380,
+                        minValue: 0,
+                        maxValue: 16,
+                        decimalPrecision: 1,
+                        dataVal:[512, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768],
+                        labelWidth: 100,
+                        tipText: function(thumb){
+
+                            return thumb.slider.dataVal[thumb.value];
+
+                        },
+                        listeners: {
+                                change: function (slider,newValue, thumb,eOpts,editMode){
+                                    if(slider.numberField){
+                                            // console.log("look!", this.ownerCt);
+                                            // this.ownerCt.getComponent(this.numberField).setValue(newValue);
+                                            this.ownerCt.getComponent(this.numberField).setRawValue(thumb.slider.dataVal[thumb.value]);
+                                    }
+
+                                }   
+                        }
+
+                    },{
+                        xtype:'numberfield',
+                        width: 100,
+                        sliderField:this.sliderField,
+                        itemId:this.numberField,
+                        minValue: 512,
+                        maxValue: 32768,
+                        step: 512,
+                        margin: '0 0 0 15',
+                        listeners: {
+                        change: function (numberfield,newValue,oldValue){
+                                    dataVal = [512, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768];
+                                    console.log(newValue, Math.floor(newValue / 2048), dataVal[Math.floor(newValue / 2048)]);
+                                    // if (oldValue < newValue) {
+                                    //     numberfield.setValue(dataVal[Math.ceil(newValue / 2048)]);
+                                    // } else if (oldValue > newValue) {
+                                    //     numberfield.setValue(dataVal[Math.floor(newValue / 2048)]);
+                                    // }
+                                    // TODO у поля плохой инкремент
+                                    if(this.sliderField){
+                                        var slider = this.ownerCt.getComponent(this.sliderField);
+                                        // slider.suspendEvents();
+                                        slider.setValue(Math.floor(newValue / 2048));
+                                        // slider.resumeEvents();
+                                            // console.log('HHH');
+                                    }
+                                }
+
+                        }
+                        }
+                ]
+
+    });
+    this.callParent();
+        }
+    });
+
+
+
     softwareSelect = Ext.create('Ext.container.Container', {
                 // extend: 'Ext.container.Container',
 
@@ -333,29 +624,45 @@ Ext.onReady(function(){
             valueField: 'num',
             allowBlank: false
         },{
-            xtype: 'slider',
-            fieldLabel: 'vCPU',
-            width: 500,
-            increment: 1,
-            minValue: 0,
-            maxValue: 12,
+            xtype: 'numbersliderVCPU'
+            // xtype: 'slider',
+            // fieldLabel: 'vCPU',
+            // width: 500,
+            // increment: 1,
+            // minValue: 0,
+            // maxValue: 12,
         },{
-            xtype: 'slider',
-            decimalPrecision: 1,
-            width: 500,
-            fieldLabel: 'RAM, Gb',
-            increment: 0.5,
-            minValue: 0.5,
-            maxValue: 32.0,
+            xtype: 'numbersliderRAM'
+            // xtype: 'slider',
+            // decimalPrecision: 1,
+            // width: 500,
+            // fieldLabel: 'RAM, MB',
+            // increment: 1,
+            // minValue: 0,
+            // maxValue: 16,
+            // dataVal:[512, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768],
+            // tipText: function(thumb){
+            //     // if(thumb.value>0){
+            //     //  thumb.slider.setFieldLabel('RAM, GB');
+            //     // }
+            //     // else {
+            //     //     thumb.slider.setFieldLabel('RAM, MB');
+            //     // }
+            //     return thumb.slider.dataVal[thumb.value];
+
+            // }
         },{
                 xtype: 'fieldcontainer',
+                itemId: 'diskContainer',
                 layout: 'hbox',
                 width: 700,
                 items:
                 [{
                     xtype: 'combobox',
+                    itemId: 'diskCombo',
                     fieldLabel: 'Disk type',
                     store: disksStore,
+                    width: 150, 
                     queryMode: 'local',
                     displayField: 'name',
                     valueField: 'num',
@@ -367,14 +674,7 @@ Ext.onReady(function(){
                         }
                     }
                 },{
-                    xtype: 'slider',
-                    fieldLabel: 'HDD, Gb',
-                    increment: 50,
-                    minValue: 50,
-                    maxValue: 1000,
-                    flex: 1.4,
-                    padding: '0, 0, 0, 20',
-                    labelWidth: 60
+                    xtype: 'numbersliderHDD'
                 }]
         },{
             xtype: 'container',
@@ -388,7 +688,7 @@ Ext.onReady(function(){
             handler: function() {
               var t = Ext.create('Ext.form.FieldContainer', {
                     layout: 'hbox',
-                    width: 700,
+                    width: 732,
                     items:
                     [{
                         xtype: 'combobox',
@@ -405,18 +705,19 @@ Ext.onReady(function(){
                             }
                         }
                     },{
-                        xtype: 'slider',
-                        fieldLabel: 'HDD, Gb',
-                        increment: 50,
-                        minValue: 50,
-                        maxValue: 1000,
-                        flex: 1.4,
-                        padding: '0, 0, 0, 20',
-                        labelWidth: 60
+                        xtype: 'numbersliderHDD'
+                        // xtype: 'slider',
+                        // fieldLabel: 'HDD, Gb',
+                        // increment: 50,
+                        // minValue: 50,
+                        // maxValue: 1000,
+                        // flex: 1.4,
+                        // padding: '0, 0, 0, 20',
+                        // labelWidth: 60
                     },{
                         xtype: 'button',
                         text: '-',
-                        margin: '0, 0, 0, 30',
+                        margin: '0, 0, 0, 10',
                         handler: function() {
                             this.up().destroy()
                         }
@@ -428,12 +729,13 @@ Ext.onReady(function(){
 
             }
         },{
-            xtype: 'slider',
-            fieldLabel: 'Bandwidth, Mbps',
-            width: 500,
-            increment: 1,
-            minValue: 1,
-            maxValue: 100,
+            xtype: 'numbersliderBand'
+            // xtype: 'slider',
+            // fieldLabel: 'Bandwidth, Mbps',
+            // width: 500,
+            // increment: 1,
+            // minValue: 1,
+            // maxValue: 100,
         },{
             xtype: 'form',
             width: 300,
