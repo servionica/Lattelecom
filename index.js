@@ -73,6 +73,27 @@ Ext.onReady(function(){
         ]
     });
 
+    var vmStore = Ext.create('Ext.data.Store', {
+        fields: ['state', 'name'],
+        data : [
+            {"state":"OFF", "name":"Test VM 1"},
+            {"state":"BUILD", "name":"Test VM 2"},
+            {"state":"ON", "name":"Test VM 3"},
+            {"state":"PAY", "name":"Test VM 4"},
+            {"state":"ENDING", "name":"Test VM 5"},
+            {"state":"RELOAD", "name":"Test VM 6"}       
+
+        ]
+    });
+
+    var vpnStore = Ext.create('Ext.data.Store', {
+        fields: ['state', 'name'],
+        data : [
+            {"state":"BUILD", "name":"VPN-test 1"},
+            {"state":"ON", "name":"VPN-test 2"}
+        ]
+    });
+
     var navigCombo = Ext.create('Ext.form.ComboBox', {
         itemId: 'navigCombo',
         store: navigStore,
@@ -109,6 +130,7 @@ Ext.onReady(function(){
             handler: function() {
                 // alert('You clicked the button!');
                 mainViewport.getComponent('centerReg').getComponent('homeContainer').show();
+                mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
 
@@ -120,11 +142,24 @@ Ext.onReady(function(){
             width: 280,
             text: 'Virtual servers',
             handler: function() {
-                // alert('You clicked the button!');
                 mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').show();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid').show();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
 
+            }
+        },{
+            xtype: 'button',
+            padding: '10 10 10 10',
+            margin: '10 0 10 0',
+            width: 280,
+            text: 'VPNs',
+            handler: function() {
+                mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
+                mainViewport.getComponent('centerReg').getComponent('vpnContainer').show();
             }
         },{
             xtype: 'button',
@@ -580,6 +615,7 @@ Ext.define('numberSliderRAM', {
 
     createForm = Ext.create('Ext.form.Panel', {
         hidden: true,
+        closable: true,
         title: 'Creation Form',
         itemId: 'createForm',
         scrollable: true,
@@ -805,18 +841,39 @@ Ext.define('numberSliderRAM', {
                 // }
             }
         }
-        ]
+        ],
+        listeners:{
+            beforeclose : function (panel){
+                panel.hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid').show();
+                return false;
+            }
+        }
+
 
     });
+
+    // Ext.define('createVpnWindow', {
+    // extend: 'Ext.window.Window',
+    // initComponent: function(){
+    //     Ext.apply(this, {
+    //         title: 'Creating VPN Sito-to-Site',
+    //         height: 300,
+    //         width: 500,
+    //         collapsible: true,
+    //         layout: 'fit' ,
+    //         items:[ Ext.create('attRepGrid')
+    //             ]
+        
+    //     });
+    //     this.callParent();
+    // }
+    // });
 
     Ext.define('virtServContainer',{
         extend: 'Ext.container.Container',
         initComponent: function(config){
         Ext.apply(this, {
-            // layout: {
-            //     type: 'absolute',
-            //     // align: 'center'
-            // },
             layout: 'fit',
             scrollable: true,
             width: 800,
@@ -833,16 +890,29 @@ Ext.define('numberSliderRAM', {
                     margin: '10 0 0 10',
                     text: 'Create',
                     handler: function() {
-                        //alert('You clicked the button!');
                         mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').show();
-
+                        mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid').hide();
                     }
                 },{
                     xtype: 'button',
                     margin: '10 0 0 10',
-                    text: 'Power-off',
+                    text: 'Off/On',
                     handler: function() {
-                        alert('You clicked the button!');
+                        // alert('You clicked the button!');
+                        var grid = mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid');
+                        var sel = grid.getSelectionModel().getSelection();
+                        // console.log(sel);
+                        // console.log(sel[0].data.state);
+                        // TODO dodelat' tut
+                        if (sel[0].data.state == 'ON'){;
+                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to do that?', this.showResult, this);
+                            sel[0].set('state', 'OFF')
+                        } else if (sel[0].data.state == 'OFF'){
+                            sel[0].set('state', 'ON')
+                        } else {
+                            // rugaemsya
+                        }
+
                     }
                 },{
                     xtype: 'button',
@@ -874,14 +944,134 @@ Ext.define('numberSliderRAM', {
                     }
                 },{
                     xtype: 'button',
-                    margin: '10 0 0 309',
+                    margin: '10 0 0 10',
+                    text: 'RDP',
+                    handler: function() {
+                        alert('You clicked the button!');
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 250',
                     text: 'Destroy',
                     handler: function() {
                         alert('You clicked the button!');
                     }
                 }]
             },
-                createForm
+                createForm,
+            { 
+               xtype: 'grid',
+               width: 400,
+               hideHeaders: true,
+               store: vmStore,
+               itemId: 'virtservgrid',
+               columns: [{
+                    dataIndex: 'state',
+                    renderer: function(value,metaData){
+                        switch(value){
+                            case 'OFF':
+                                metaData.style = 'background:' + '#959595'
+                                break;
+                            case 'BUILD':
+                                metaData.style = 'background:' + '#E6FF00';
+                                break;
+                            case 'ON':
+                                metaData.style = 'background:' + '#00FF44';
+                                break;
+                            case 'PAY':
+                                metaData.style = 'background:' + '#FF5151';
+                                break;
+                            case 'ENDING':
+                                metaData.style = 'background:' + '#FF9751';
+                                break;
+                            case 'RELOAD':
+                                metaData.style = 'background:' + '#959595';
+                                break;
+                        }
+
+                        return value;
+                    }
+                },{
+                    dataIndex: 'name', 
+                    flex: 0.5
+                }
+               ],
+            }
+            
+            ]
+        })
+        this.callParent();
+    }
+    });
+
+    Ext.define('vpnContainer',{
+        extend: 'Ext.container.Container',
+        initComponent: function(config){
+        Ext.apply(this, {
+            layout: 'fit',
+            scrollable: true,
+            width: 800,
+            renderTo: Ext.getBody(),
+            border: 1,
+            items: [
+            {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0, 0, 10, 0',
+                items:[
+                {
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Create',
+                    handler: function() {
+                        // mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').show();
+
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Reconfig',
+                    handler: function() {
+                        alert('You clicked the button!');
+                    }
+                }]
+            },{
+               xtype: 'grid',
+               width: 400,
+               hideHeaders: true,
+               store: vpnStore,
+               columns: [{
+                    dataIndex: 'state',
+                    renderer: function(value,metaData){
+                        switch(value){
+                            case 'OFF':
+                                metaData.style = 'background:' + '#959595'
+                                break;
+                            case 'BUILD':
+                                metaData.style = 'background:' + '#E6FF00';
+                                break;
+                            case 'ON':
+                                metaData.style = 'background:' + '#00FF44';
+                                break;
+                            case 'PAY':
+                                metaData.style = 'background:' + '#FF5151';
+                                break;
+                            case 'ENDING':
+                                metaData.style = 'background:' + '#FF9751';
+                                break;
+                            case 'RELOAD':
+                                metaData.style = 'background:' + '#959595';
+                                break;
+                        }
+
+                        return value;
+                    }
+                },{
+                    dataIndex: 'name', 
+                    flex: 0.5
+                }
+               ],
+            }
             
             ]
         })
@@ -917,7 +1107,7 @@ Ext.define('numberSliderRAM', {
                     mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
                     mainViewport.getComponent('centerReg').getComponent('virtServContainer').show();
                     mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').show();
-                    //console.log(mainViewport.getComponent('centerReg').getComponent('virtServContainer'))
+                    mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid').hide();
                 }
             }
             ]
@@ -942,7 +1132,10 @@ Ext.define('numberSliderRAM', {
         itemId: 'virtServContainer',
         hidden: true
     });
-    
+    vpnContainer = Ext.create('vpnContainer', {
+        itemId: 'vpnContainer',
+        hidden: true
+    });
 
 
     var mainViewport = Ext.create('Ext.container.Viewport', {
@@ -966,7 +1159,7 @@ Ext.define('numberSliderRAM', {
             region: 'center',
             scrollable: true,
             itemId: 'centerReg',
-            items: [virtServContainer, homeContainer]
+            items: [virtServContainer, homeContainer, vpnContainer]
         }]
     });
 
