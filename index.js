@@ -1,4 +1,13 @@
 
+var STATUS_COLORS = {
+    'OFF': '#959595',
+    'BUILD': '#E6FF00',
+    'ON': '#00FF44',
+    'PAY': '#FF5151',
+    'ENDING': '#FF9751',
+    'RELOAD': '#959595'
+};
+
 Ext.onReady(function(){
 
     Ext.tip.QuickTipManager.init();
@@ -76,13 +85,21 @@ Ext.onReady(function(){
     var vmStore = Ext.create('Ext.data.Store', {
         fields: ['state', 'name'],
         data : [
-            {"state":"OFF", "name":"Test VM 1"},
-            {"state":"BUILD", "name":"Test VM 2"},
-            {"state":"ON", "name":"Test VM 3"},
-            {"state":"PAY", "name":"Test VM 4"},
-            {"state":"ENDING", "name":"Test VM 5"},
-            {"state":"RELOAD", "name":"Test VM 6"}       
+            {"state":"OFF", "name":"Test VM 1", "oldstate":"OFF"},
+            {"state":"BUILD", "name":"Test VM 2", "oldstate":"BUILD"},
+            {"state":"ON", "name":"Test VM 3", "oldstate":"ON"},
+            {"state":"PAY", "name":"Test VM 4", "oldstate":"PAY"},
+            {"state":"ENDING", "name":"Test VM 5", "oldstate":"ENDING"},
+            {"state":"RELOAD", "name":"Test VM 6", "oldstate":"RELOAD"}       
 
+        ]
+    });
+
+    var snapshotStore = Ext.create('Ext.data.Store', {
+        fields: ['state', 'name', 'date-time'],
+        data : [
+            {"state":"VALID", "name":"Test VM 1", "date_time": "2014-12-02 10:15:12"},
+            {"state":"VALID", "name":"Test VM 2", "date_time": "2014-12-02 10:15:12"}
         ]
     });
 
@@ -93,6 +110,57 @@ Ext.onReady(function(){
             {"state":"ON", "name":"VPN-test 2"}
         ]
     });
+
+    var encryptStore = Ext.create('Ext.data.Store', {
+        fields: ['num', 'name'],
+        data : [
+            {"num":"1", "name":"Default: aes-128"},
+            {"num":"2", "name":"aes-192"},
+            {"num":"3", "name":"aes-256"},
+            {"num":"4", "name":"3des"}
+        ]
+    });
+
+    var lastStore = Ext.create('Ext.data.Store', {
+        fields: ['num', 'name'],
+        data : [
+            {"num":"5", "name":"5"},
+            {"num":"10", "name":"10"},
+            {"num":"15", "name":"15"},
+            {"num":"20", "name":"20"}
+        ]
+    });
+
+    var historyStore = Ext.create('Ext.data.Store', {
+        fields: ['date_time', 'name', 'person'],
+        test_data : [
+            {"date_time":"2014-11-27 10:21:48 ", "name":"VM 1 created ", "person": "Marya Ivanovna"},
+            {"date_time":"2014-11-27 09:14:37 ", "name":"Snapshot 1 deleted ", "person": "Boris"},
+            {"date_time":"2014-11-25 08:13:07 ", "name":"VM 2 deleted ", "person": "Lidochka"},
+            {"date_time":"2014-11-27 10:21:48 ", "name":"VM 1 created ", "person": "Marya Ivanovna"},
+            {"date_time":"2014-11-27 09:14:37 ", "name":"Snapshot 1 deleted ", "person": "Boris"},
+            {"date_time":"2014-11-25 08:13:07 ", "name":"VM 2 deleted ", "person": "Lidochka"},
+            {"date_time":"2014-11-27 10:21:48 ", "name":"VM 1 created ", "person": "Marya Ivanovna"},
+            {"date_time":"2014-11-27 09:14:37 ", "name":"Snapshot 1 deleted ", "person": "Boris"},
+            {"date_time":"2014-11-25 08:13:07 ", "name":"VM 2 deleted ", "person": "Lidochka"},
+            {"date_time":"2014-11-27 10:21:48 ", "name":"VM 1 created ", "person": "Marya Ivanovna"},
+            {"date_time":"2014-11-27 09:14:37 ", "name":"Snapshot 1 deleted ", "person": "Boris"},
+            {"date_time":"2014-11-25 08:13:07 ", "name":"VM 2 deleted ", "person": "Lidochka"},
+            {"date_time":"2014-11-27 10:21:48 ", "name":"VM 1 created ", "person": "Marya Ivanovna"},
+            {"date_time":"2014-11-27 09:14:37 ", "name":"Snapshot 1 deleted ", "person": "Boris"},
+            {"date_time":"2014-11-25 08:13:07 ", "name":"VM 2 deleted ", "person": "Lidochka"},
+            {"date_time":"2014-11-27 10:21:48 ", "name":"VM 1 created ", "person": "Marya Ivanovna"},
+            {"date_time":"2014-11-27 09:14:37 ", "name":"Snapshot 1 deleted ", "person": "Boris"},
+            {"date_time":"2014-11-25 08:13:07 ", "name":"VM 2 deleted ", "person": "Lidochka"},
+            {"date_time":"2014-11-27 10:21:48 ", "name":"VM 1 created ", "person": "Marya Ivanovna"},
+            {"date_time":"2014-11-27 09:14:37 ", "name":"Snapshot 1 deleted ", "person": "Boris"},
+            {"date_time":"2014-11-25 08:13:07 ", "name":"VM 2 deleted ", "person": "Lidochka"},
+            {"date_time":"2014-11-27 10:21:48 ", "name":"VM 1 created ", "person": "Marya Ivanovna"},
+            {"date_time":"2014-11-27 09:14:37 ", "name":"Snapshot 1 deleted ", "person": "Boris"},
+            {"date_time":"2014-11-25 08:13:07 ", "name":"VM 2 deleted ", "person": "Lidochka"}
+        ]
+    });
+    historyStore.loadData(historyStore.test_data.slice(0,10));
 
     var navigCombo = Ext.create('Ext.form.ComboBox', {
         itemId: 'navigCombo',
@@ -133,7 +201,8 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
-
+                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
             }
         },{
             xtype: 'button',
@@ -146,8 +215,10 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').show();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid').show();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('buttoncontainer').show();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
-
+                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
             }
         },{
             xtype: 'button',
@@ -160,6 +231,9 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
                 mainViewport.getComponent('centerReg').getComponent('vpnContainer').show();
+                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+
             }
         },{
             xtype: 'button',
@@ -168,7 +242,12 @@ Ext.onReady(function(){
             width: 280,
             text: 'Snapshots',
             handler: function() {
-                alert('You clicked the button!');
+                mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
+                mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').show();
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
             }
         },{
             xtype: 'button',
@@ -185,6 +264,29 @@ Ext.onReady(function(){
             margin: '10 0 10 0',
             width: 280,
             text: 'History',
+            handler: function() {
+                mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
+                mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').show();            
+            }
+        },{
+            xtype: 'button',
+            padding: '10 10 10 10',
+            margin: '10 0 10 0',
+            width: 280,
+            text: 'Backups',
+            handler: function() {
+                alert('You clicked the button!');
+            }
+        },{
+            xtype: 'button',
+            padding: '10 10 10 10',
+            margin: '10 0 10 0',
+            width: 280,
+            text: 'FAQ',
             handler: function() {
                 alert('You clicked the button!');
             }
@@ -846,6 +948,7 @@ Ext.define('numberSliderRAM', {
             beforeclose : function (panel){
                 panel.hide();
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid').show();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('buttoncontainer').show();
                 return false;
             }
         }
@@ -853,22 +956,148 @@ Ext.define('numberSliderRAM', {
 
     });
 
-    // Ext.define('createVpnWindow', {
-    // extend: 'Ext.window.Window',
-    // initComponent: function(){
-    //     Ext.apply(this, {
-    //         title: 'Creating VPN Sito-to-Site',
-    //         height: 300,
-    //         width: 500,
-    //         collapsible: true,
-    //         layout: 'fit' ,
-    //         items:[ Ext.create('attRepGrid')
-    //             ]
-        
-    //     });
-    //     this.callParent();
-    // }
-    // });
+    Ext.define('createVpnForm', {
+    extend: 'Ext.form.Panel',
+    initComponent: function(){
+        Ext.apply(this, {
+            itemId: 'createVpnForm',
+            scrollable: true,
+            autoScroll: true,
+            bodyPadding: 5,
+            defaultType: 'textfield',
+            items: [{
+                fieldLabel: "VPN's name",
+                width: 400,
+                name: 'name',
+                allowBlank: false
+            },{
+                fieldLabel: 'Peer IP',
+                name: 'peerIP',
+                allowBlank: false
+            },{
+                fieldLabel: 'Cidr',
+                name: 'cidr',
+                allowBlank: false
+            },{
+                xtype: 'combobox',
+                fieldLabel: 'Encryption',
+                store: encryptStore,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'num',
+                allowBlank: false,
+                value: 'Default: aes-128'
+            }],
+            buttons: [{
+                text: 'Reset',
+                handler: function() {
+                    this.up('form').getForm().reset();
+                }
+            },{
+                text: 'Submit',
+                formBind: true, //only enabled once the form is valid
+                disabled: true,
+                handler: function() {
+                    // var form = this.up('form').getForm();
+                    // if (form.isValid()) {
+                    //     form.submit({
+                    //         success: function(form, action) {
+                    //            Ext.Msg.alert('Success', action.result.msg);
+                    //         },
+                    //         failure: function(form, action) {
+                    //             Ext.Msg.alert('Failed', action.result.msg);
+                    //         }
+                    //     });
+                    // }
+                }
+            }
+            ]
+            });
+            this.callParent();
+        }
+    });
+
+    Ext.define('createVpnWindow', {
+    extend: 'Ext.window.Window',
+    initComponent: function(){
+        Ext.apply(this, {
+            title: 'Creating VPN Sito-to-Site',
+            height: 250,
+            width: 500,
+            collapsible: true,
+            layout: 'fit' ,
+            items:[ Ext.create('createVpnForm')]        
+        });
+        this.callParent();
+    }
+    });
+
+    Ext.define('createSnapshotForm', {
+    extend: 'Ext.form.Panel',
+    initComponent: function(){
+        Ext.apply(this, {
+            itemId: 'createSnapshotForm',
+            scrollable: true,
+            autoScroll: true,
+            bodyPadding: 5,
+            defaultType: 'textfield',
+            items: [{
+                fieldLabel: "Snapshot's name",
+                width: 400,
+                name: 'name',
+                allowBlank: false
+            },{
+                xtype: 'combobox',
+                fieldLabel: 'Choose VM',
+                store: vmStore,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'num',
+                allowBlank: false,
+            }],
+            buttons: [{
+                text: 'Reset',
+                handler: function() {
+                    this.up('form').getForm().reset();
+                }
+            },{
+                text: 'Submit',
+                formBind: true, //only enabled once the form is valid
+                disabled: true,
+                handler: function() {
+                    // var form = this.up('form').getForm();
+                    // if (form.isValid()) {
+                    //     form.submit({
+                    //         success: function(form, action) {
+                    //            Ext.Msg.alert('Success', action.result.msg);
+                    //         },
+                    //         failure: function(form, action) {
+                    //             Ext.Msg.alert('Failed', action.result.msg);
+                    //         }
+                    //     });
+                    // }
+                }
+            }
+            ]
+            });
+            this.callParent();
+        }
+    });
+
+    Ext.define('createSnapshotWindow', {
+    extend: 'Ext.window.Window',
+    initComponent: function(){
+        Ext.apply(this, {
+            title: 'Creating snapshot',
+            height: 170,
+            width: 500,
+            collapsible: true,
+            layout: 'fit' ,
+            items:[ Ext.create('createSnapshotForm')]        
+        });
+        this.callParent();
+    }
+    });
 
     Ext.define('virtServContainer',{
         extend: 'Ext.container.Container',
@@ -884,6 +1113,7 @@ Ext.define('numberSliderRAM', {
                 xtype: 'container',
                 layout: 'hbox',
                 margin: '0, 0, 10, 0',
+                itemId: 'buttoncontainer',
                 items:[
                 {
                     xtype: 'button',
@@ -892,25 +1122,32 @@ Ext.define('numberSliderRAM', {
                     handler: function() {
                         mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').show();
                         mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid').hide();
+                        mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('buttoncontainer').hide();
                     }
                 },{
                     xtype: 'button',
                     margin: '10 0 0 10',
                     text: 'Off/On',
                     handler: function() {
-                        // alert('You clicked the button!');
                         var grid = mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid');
                         var sel = grid.getSelectionModel().getSelection();
-                        // console.log(sel);
-                        // console.log(sel[0].data.state);
-                        // TODO dodelat' tut
-                        if (sel[0].data.state == 'ON'){;
-                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to do that?', this.showResult, this);
-                            sel[0].set('state', 'OFF')
+                        if (sel[0].data.state == 'ON' || sel[0].data.state == 'ENDING'){
+                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to turn ' + sel[0].data.name + ' off?', function(btn){
+                                if (btn == 'yes'){
+                                    sel[0].set('state', 'OFF');
+                                } 
+                            }, this);     
                         } else if (sel[0].data.state == 'OFF'){
-                            sel[0].set('state', 'ON')
+                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to turn ' + sel[0].data.name + ' on?', function(btn){
+                                if (btn == 'yes'){
+                                    if (sel[0].data.oldstate != 'OFF')
+                                        sel[0].set('state', sel[0].data.oldstate)
+                                    else sel[0].set('state', 'ON')
+
+                                } 
+                            }, this);    
                         } else {
-                            // rugaemsya
+                            Ext.Msg.alert('Sorry', 'You cannot turn ' + sel[0].data.name + ' on or off.');
                         }
 
                     }
@@ -926,7 +1163,13 @@ Ext.define('numberSliderRAM', {
                     margin: '10 0 0 10',
                     text: 'Restart',
                     handler: function() {
-                        alert('You clicked the button!');
+                        var grid = mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid');
+                        var sel = grid.getSelectionModel().getSelection();
+                        Ext.MessageBox.confirm('Confirm', 'Are you sure you want restart ' + sel[0].data.name + ' ?', function(btn){
+                            if (btn == 'yes' && (sel[0].data.state == 'ON' || sel[0].data.state == 'ENDING')){
+                                sel[0].set('state', 'RELOAD');
+                            } 
+                        }, this);     
                     }
                 },{
                     xtype: 'button',
@@ -940,7 +1183,7 @@ Ext.define('numberSliderRAM', {
                     margin: '10 0 0 10',
                     text: 'Reconfig',
                     handler: function() {
-                        alert('You clicked the button!');
+                        
                     }
                 },{
                     xtype: 'button',
@@ -954,7 +1197,13 @@ Ext.define('numberSliderRAM', {
                     margin: '10 0 0 250',
                     text: 'Destroy',
                     handler: function() {
-                        alert('You clicked the button!');
+                        var grid = mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid');
+                        var sel = grid.getSelectionModel().getSelection();
+                        Ext.Msg.prompt('Confirm', 'You are going to delete ' + sel[0].data.name + ' Please, type "DESTROY" to confirm it.', function(btn, text){
+                            if (btn == 'ok' && text == 'DESTROY'){
+                                sel[0].store.removeAt(sel[0].store.indexOfId(sel[0].data.id))
+                            }
+                        });
                     }
                 }]
             },
@@ -968,27 +1217,7 @@ Ext.define('numberSliderRAM', {
                columns: [{
                     dataIndex: 'state',
                     renderer: function(value,metaData){
-                        switch(value){
-                            case 'OFF':
-                                metaData.style = 'background:' + '#959595'
-                                break;
-                            case 'BUILD':
-                                metaData.style = 'background:' + '#E6FF00';
-                                break;
-                            case 'ON':
-                                metaData.style = 'background:' + '#00FF44';
-                                break;
-                            case 'PAY':
-                                metaData.style = 'background:' + '#FF5151';
-                                break;
-                            case 'ENDING':
-                                metaData.style = 'background:' + '#FF9751';
-                                break;
-                            case 'RELOAD':
-                                metaData.style = 'background:' + '#959595';
-                                break;
-                        }
-
+                        metaData.style = 'background:' + STATUS_COLORS[value];
                         return value;
                     }
                 },{
@@ -1024,43 +1253,46 @@ Ext.define('numberSliderRAM', {
                     margin: '10 0 0 10',
                     text: 'Create',
                     handler: function() {
-                        // mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').show();
-
+                        var createVpnWindow = Ext.create('createVpnWindow');
+                        createVpnWindow.show();
                     }
                 },{
                     xtype: 'button',
                     margin: '10 0 0 10',
                     text: 'Reconfig',
                     handler: function() {
-                        alert('You clicked the button!');
+                        var createVpnWindow = Ext.create('createVpnWindow');
+                        createVpnWindow.show();
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 600',
+                    text: 'Destroy',
+                    handler: function() {
+                        var grid = mainViewport.getComponent('centerReg').getComponent('vpnContainer').getComponent('vpngrid');
+                        var sel = grid.getSelectionModel().getSelection();
+                        Ext.Msg.prompt('Confirm', 'You are going to delete ' + sel[0].data.name + ' Please, type "DESTROY" to confirm it.', function(btn, text){
+                            if (btn == 'ok' && text == 'DESTROY'){
+                                sel[0].store.removeAt(sel[0].store.indexOfId(sel[0].data.id))
+                            }
+                        });
                     }
                 }]
             },{
                xtype: 'grid',
                width: 400,
+               itemId: 'vpngrid',
                hideHeaders: true,
                store: vpnStore,
                columns: [{
                     dataIndex: 'state',
-                    renderer: function(value,metaData){
+                    renderer: function(value, metaData){
                         switch(value){
-                            case 'OFF':
-                                metaData.style = 'background:' + '#959595'
-                                break;
                             case 'BUILD':
                                 metaData.style = 'background:' + '#E6FF00';
                                 break;
                             case 'ON':
                                 metaData.style = 'background:' + '#00FF44';
-                                break;
-                            case 'PAY':
-                                metaData.style = 'background:' + '#FF5151';
-                                break;
-                            case 'ENDING':
-                                metaData.style = 'background:' + '#FF9751';
-                                break;
-                            case 'RELOAD':
-                                metaData.style = 'background:' + '#959595';
                                 break;
                         }
 
@@ -1068,6 +1300,171 @@ Ext.define('numberSliderRAM', {
                     }
                 },{
                     dataIndex: 'name', 
+                    flex: 0.5
+                }
+               ],
+            }
+            
+            ]
+        })
+        this.callParent();
+    }
+    });
+    
+
+    Ext.define('historyContainer',{
+        extend: 'Ext.container.Container',
+        initComponent: function(config){
+        Ext.apply(this, {
+            layout: 'fit',
+            scrollable: true,
+            width: 800,
+            renderTo: Ext.getBody(),
+            border: 1,
+            items: [
+            {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0, 0, 10, 0',
+                items:[
+                {
+                    xtype: 'combobox',
+                    margin: '10 0 0 10',
+                    fieldLabel: 'Last',
+                    store: lastStore,
+                    queryMode: 'local',
+                    displayField: 'name',
+                    valueField: 'num',
+                    value: '10',
+                    width: 120,
+                    labelWidth: 50,
+                    listeners: {
+                        select: function(cb, r) {
+                            var grid = mainViewport.getComponent('centerReg').getComponent('historyContainer').getComponent('historygrid');
+                            var store = grid.getStore();
+                            var page_size = r[0].data.num;
+                            store.setPageSize(page_size);
+                            store.loadData(store.test_data.slice(0, page_size));
+                        }
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 610',
+                    text: 'Clear',
+                    handler: function() {
+                        var grid = mainViewport.getComponent('centerReg').getComponent('historyContainer').getComponent('historygrid');
+                        console.log(grid.getStore());
+                        Ext.MessageBox.confirm('Confirm', 'You are going to clear all items. Do you accept?', function(btn){
+                            if (btn == 'yes'){
+                                grid.getStore().removeAll()
+                            } 
+                        }, this); 
+                    }
+                }]
+            },{
+               xtype: 'grid',
+               width: 800,
+               itemId: 'historygrid',
+               store: historyStore,
+               columns: [{
+                    dataIndex: 'date_time',
+                    text: 'Date/Time',
+                    flex: 0.7
+                },{
+                    dataIndex: 'name', 
+                    text: 'Event',
+                    flex: 1
+                },{
+                    dataIndex: 'person', 
+                    text: 'Person',
+                    flex: 1
+                }
+               ],
+            }
+            
+            ]
+        })
+        this.callParent();
+    }
+    });
+
+
+
+    Ext.define('snapshotContainer',{
+        extend: 'Ext.container.Container',
+        initComponent: function(config){
+        Ext.apply(this, {
+            layout: 'fit',
+            scrollable: true,
+            width: 800,
+            renderTo: Ext.getBody(),
+            border: 1,
+            items: [
+            {
+                xtype: 'container',
+                layout: 'hbox',
+                margin: '0, 0, 10, 0',
+                items:[
+                {
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Create',
+                    handler: function() {
+                        var createSnapshotWindow = Ext.create('createSnapshotWindow');
+                        createSnapshotWindow.show();
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 10',
+                    text: 'Restore',
+                    handler: function() {
+                        var grid = mainViewport.getComponent('centerReg').getComponent('snapshotContainer').getComponent('snapshotgrid');
+                        var sel = grid.getSelectionModel().getSelection();
+                        if (sel[0].data.state == 'VALID'){
+                            Ext.MessageBox.confirm('Confirm', 'You are going to restore "' + sel[0].data.name + '" from snapshot. Do you accept that?', function(btn){
+                                if (btn == 'yes'){
+                                    //restore VM
+                                    Ext.Msg.alert('', sel[0].data.name + ' is restored.');
+                                } 
+                            }, this);     
+                        }
+                    }
+                },{
+                    xtype: 'button',
+                    margin: '10 0 0 600',
+                    text: 'Destroy',
+                    handler: function() {
+                        var grid = mainViewport.getComponent('centerReg').getComponent('snapshotContainer').getComponent('snapshotgrid');
+                        var sel = grid.getSelectionModel().getSelection();
+                        Ext.Msg.prompt('Confirm', 'You are going to delete snapshot of ' + sel[0].data.name + ' Please, type "DESTROY" to confirm it.', function(btn, text){
+                            if (btn == 'ok' && text == 'DESTROY'){
+                                sel[0].store.removeAt(sel[0].store.indexOfId(sel[0].data.id))
+                            }
+                        });
+                    }
+                }]
+            },{
+               xtype: 'grid',
+               width: 600,
+               itemId: 'snapshotgrid',
+               hideHeaders: true,
+               store: snapshotStore,
+               columns: [{
+                    dataIndex: 'state',
+                    renderer: function(value,metaData){
+                        switch(value){
+                            case 'VALID':
+                                metaData.style = 'background:' + '#00FF44'
+                                break;
+                        }
+
+                        return value;
+                    }
+                },{
+                    dataIndex: 'name',
+                    flex: 1
+                },{
+                    dataIndex: 'date_time',
                     flex: 0.5
                 }
                ],
@@ -1108,6 +1505,7 @@ Ext.define('numberSliderRAM', {
                     mainViewport.getComponent('centerReg').getComponent('virtServContainer').show();
                     mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').show();
                     mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid').hide();
+                    mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('buttoncontainer').hide();
                 }
             }
             ]
@@ -1136,6 +1534,15 @@ Ext.define('numberSliderRAM', {
         itemId: 'vpnContainer',
         hidden: true
     });
+    snapshotContainer = Ext.create('snapshotContainer', {
+        itemId: 'snapshotContainer',
+        hidden: true
+    });
+    historyContainer = Ext.create('historyContainer', {
+        itemId: 'historyContainer',
+        hidden: true
+    });
+
 
 
     var mainViewport = Ext.create('Ext.container.Viewport', {
@@ -1159,7 +1566,7 @@ Ext.define('numberSliderRAM', {
             region: 'center',
             scrollable: true,
             itemId: 'centerReg',
-            items: [virtServContainer, homeContainer, vpnContainer]
+            items: [virtServContainer, homeContainer, vpnContainer, snapshotContainer, historyContainer]
         }]
     });
 
@@ -1167,14 +1574,3 @@ Ext.define('numberSliderRAM', {
 
 
 });
-
-
-
-// value: 'Basic SLA (99,7%)',
-            // xtype: 'combobox',
-            // fieldLabel: 'SLA',
-            // store: slaStore,
-            // queryMode: 'local',
-            // displayField: 'name',
-            // valueField: 'num',
-            // allowBlank: false

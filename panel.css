@@ -7,6 +7,10 @@ border-color: #f2654a !important
 color: #f2654a !important
 }
 
+.x-window-header-title-default {
+color: #f2654a !important
+}
+
 .x-tool-img {
 background-image: url(http://localhost/ext-5.0.1/packages/ext-theme-crisp/build/resources/images/tools/tool-sprites-dark.png) !important;
 }
