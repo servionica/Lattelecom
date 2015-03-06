@@ -91,7 +91,8 @@ Ext.onReady(function(){
             {"state":"ON", "name":"Test VM 3", "oldstate":"ON"},
             {"state":"PAY", "name":"Test VM 4", "oldstate":"PAY"},
             {"state":"ENDING", "name":"Test VM 5", "oldstate":"ENDING"},
-            {"state":"RELOAD", "name":"Test VM 6", "oldstate":"RELOAD"}       
+            {"state":"RELOAD", "name":"Test VM 6", "oldstate":"RELOAD"},
+            {"state":"PAUSE", "name":"Test VM 7", "oldstate":"PAUSE"}        
 
         ]
     });
@@ -218,6 +219,7 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
                 mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();
             }
         },{
             xtype: 'button',
@@ -234,6 +236,7 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
                 mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();
             }
         },{
             xtype: 'button',
@@ -248,6 +251,7 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('vpnContainer').show();
                 mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();
 
             }
         },{
@@ -263,6 +267,7 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('snapshotContainer').show();
                 mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();
             }
         },{
             xtype: 'button',
@@ -285,7 +290,8 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
                 mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
-                mainViewport.getComponent('centerReg').getComponent('historyContainer').show();            
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').show();
+                mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();            
             }
         },{
             xtype: 'button',
@@ -1257,9 +1263,29 @@ Ext.define('numberSliderRAM', {
                 },{
                     xtype: 'button',
                     margin: '10 0 0 10',
-                    text: 'Suspend',
+                    text: 'Resume/Pause',
                     handler: function() {
-                        alert('You clicked the button!');
+                        var grid = mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid');
+                        var sel = grid.getSelectionModel().getSelection();
+                        if (sel[0].data.state == 'ON' || sel[0].data.state == 'ENDING'){
+                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want pause ' + sel[0].data.name + '?', function(btn){
+                                if (btn == 'yes'){
+                                    sel[0].set('state', 'PAUSE');
+                                } 
+                            }, this);     
+                        } else if (sel[0].data.state == 'PAUSE'){
+                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to resume ' + sel[0].data.name + '?', function(btn){
+                                if (btn == 'yes'){
+                                    if (sel[0].data.oldstate != 'PAUSE')
+                                        sel[0].set('state', sel[0].data.oldstate)
+                                    else sel[0].set('state', 'ON')
+
+                                } 
+                            }, this);    
+                        } else {
+                            Ext.Msg.alert('Sorry', 'You cannot pause or resume ' + sel[0].data.name + '.');
+                        }
+
                     }
                 },{
                     xtype: 'button',
@@ -1297,7 +1323,7 @@ Ext.define('numberSliderRAM', {
                     }
                 },{
                     xtype: 'button',
-                    margin: '10 0 0 250',
+                    margin: '10 0 0 240',
                     text: 'Destroy',
                     handler: function() {
                         var grid = mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid');
@@ -1636,10 +1662,24 @@ Ext.define('numberSliderRAM', {
                 xtype: 'button',
                 x: 100, y: 100,
                 margin: '10 0 0 10',
-                text: 'Help me!!!',
+                text: 'Get support',
                 handler: function() {
                     var supportWindow = Ext.create('supportWindow');
                     supportWindow.show();
+                }
+            },{
+                xtype: 'button',
+                x: 100, y: 150,
+                margin: '10 0 0 10',
+                text: 'How does it work?',
+                handler: function() {
+                    mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
+                    mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
+                    mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
+                    mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
+                    mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
+                    mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+                    mainViewport.getComponent('centerReg').getComponent('faqContainer').show();
                 }
             },{
                 xtype: 'button',
