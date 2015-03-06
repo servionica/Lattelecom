@@ -5,7 +5,8 @@ var STATUS_COLORS = {
     'ON': '#00FF44',
     'PAY': '#FF5151',
     'ENDING': '#FF9751',
-    'RELOAD': '#959595'
+    'RELOAD': '#959595',
+    'PAUSE': '#959595'
 };
 
 Ext.onReady(function(){
@@ -130,6 +131,20 @@ Ext.onReady(function(){
             {"num":"20", "name":"20"}
         ]
     });
+
+    var problemStore = Ext.create('Ext.data.Store', {
+        fields: ['num', 'name'],
+        data : [
+            {"num":"1", "name":"I can't pay my subscription"},
+            {"num":"2", "name":"I've paid, but it still doesn't work"},
+            {"num":"3", "name":"I cant't get my discount"},
+            {"num":"4", "name":"Problem with my server"},
+            {"num":"5", "name":"I have some questions"},
+            {"num":"6", "name":"I don't really know"}
+        ]
+    });
+
+
 
     var historyStore = Ext.create('Ext.data.Store', {
         fields: ['date_time', 'name', 'person'],
@@ -288,7 +303,14 @@ Ext.onReady(function(){
             width: 280,
             text: 'FAQ',
             handler: function() {
-                alert('You clicked the button!');
+                mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
+                mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('faqContainer').show();    
+
             }
         }
     ];
@@ -1099,6 +1121,87 @@ Ext.define('numberSliderRAM', {
     }
     });
 
+    Ext.define('supportWindow', {
+    extend: 'Ext.window.Window',
+    initComponent: function(){
+        Ext.apply(this, {
+            title: 'Connect to support',
+            height: 300,
+            width: 500,
+            collapsible: true,
+            layout: 'fit' ,
+            items:[ Ext.create('supportForm')]        
+        });
+        this.callParent();
+    }
+    });
+
+
+    Ext.define('supportForm', {
+    extend: 'Ext.form.Panel',
+    initComponent: function(){
+        Ext.apply(this, {
+            itemId: 'supportForm',
+            scrollable: true,
+            autoScroll: true,
+            bodyPadding: 5,
+            defaultType: 'textfield',
+            items: [{
+                fieldLabel: "Your name",
+                width: 400,
+                name: 'name',
+                labelAlign: 'top',
+                allowBlank: false
+            },{
+                xtype: 'combobox',
+                fieldLabel: 'What kind of problem do you have?',
+                store: problemStore,
+                queryMode: 'local',
+                displayField: 'name',
+                width: 400,
+                labelAlign: 'top',
+                valueField: 'num',
+                allowBlank: false,
+            },{
+            xtype: 'textareafield',
+            fieldLabel: 'Message',
+            labelAlign: 'top',
+            margin: '0',
+            width: 400,
+            allowBlank: false
+        }],
+            buttons: [{
+                text: 'Reset',
+                handler: function() {
+                    this.up('form').getForm().reset();
+                }
+            },{
+                text: 'Send',
+                formBind: true, //only enabled once the form is valid
+                disabled: true,
+                handler: function() {
+                    var form = this.up('form').getForm();
+                    // if (form.isValid()) {
+                    //     form.submit({
+                    //         success: function(form, action) {
+                    //            Ext.Msg.alert('Success', action.result.msg);
+                    //         },
+                    //         failure: function(form, action) {
+                    //             Ext.Msg.alert('Failed', action.result.msg);
+                    //         }
+                    //     });
+                    // }
+                    Ext.Msg.alert('Connect to support', 'Thank you! We sent your ticket number to your e-mail. Our support team will contact you soon.');
+                    this.up('window').destroy();
+                }
+            }
+            ]
+            });
+            this.callParent();
+        }
+    });
+
+
     Ext.define('virtServContainer',{
         extend: 'Ext.container.Container',
         initComponent: function(config){
@@ -1476,6 +1579,48 @@ Ext.define('numberSliderRAM', {
     }
     });
 
+    Ext.define('faqContainer',{
+        extend: 'Ext.container.Container',
+        initComponent: function(config){
+        Ext.apply(this, {
+            layout: 'fit',
+            scrollable: true,
+            width: 800,
+            border: 1,
+            items: [{
+                xtype: 'panel',
+                hideHeaders: true,
+                width: 600,
+                height: 600,
+                defaults: {
+                    bodyStyle: 'padding:15px'
+                },
+                layout: {
+                    type: 'accordion',
+                    titleCollapse: true,
+                    animate: true,
+                },
+                items: [{
+                    title: 'How to create a virtual machine?',
+                    html: 'Content here'
+                },{
+                    title: 'How to reconfigure virtual machine?',
+                    html: 'Content here'
+                },{
+                    title: 'How to control virtual machine?',
+                    html: 'Content here'
+                },{
+                    title: 'Snapshots of virtual machine',
+                    html: 'Content here'
+                }]
+            }
+            
+            ]
+        })
+        this.callParent();
+    }
+    });
+
     Ext.define('homeContainer',{
         extend: 'Ext.container.Container',
         initComponent: function(config){
@@ -1493,7 +1638,8 @@ Ext.define('numberSliderRAM', {
                 margin: '10 0 0 10',
                 text: 'Help me!!!',
                 handler: function() {
-                    alert('You clicked the button!');
+                    var supportWindow = Ext.create('supportWindow');
+                    supportWindow.show();
                 }
             },{
                 xtype: 'button',
@@ -1542,6 +1688,10 @@ Ext.define('numberSliderRAM', {
         itemId: 'historyContainer',
         hidden: true
     });
+    faqContainer = Ext.create('faqContainer', {
+        itemId: 'faqContainer',
+        hidden: true
+    });
 
 
 
@@ -1566,7 +1716,12 @@ Ext.define('numberSliderRAM', {
             region: 'center',
             scrollable: true,
             itemId: 'centerReg',
-            items: [virtServContainer, homeContainer, vpnContainer, snapshotContainer, historyContainer]
+            items: [virtServContainer, 
+                    homeContainer, 
+                    vpnContainer, 
+                    snapshotContainer, 
+                    historyContainer, 
+                    faqContainer]
         }]
     });
 
