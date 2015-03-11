@@ -1,3 +1,19 @@
+var config = {
+    cpu: 4,
+    memory: 8192,
+    disks: [
+        {
+            "type": "SAS",
+            size: 20
+        },
+        {
+            "type": "SATA",
+            size: 100
+        }
+    ]
+};
+
+
 
 var STATUS_COLORS = {
     'OFF': '#959595',
@@ -10,6 +26,20 @@ var STATUS_COLORS = {
 };
 
 Ext.onReady(function(){
+    window.BUILD_GRADIENT = new Ext.XTemplate(
+        "background: #e6ff00;",
+        // "background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwZmY0NCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjQ5JSIgc3RvcC1jb2xvcj0iIzAwZmY0NCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2U2ZmYwMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlNmZmMDAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);",
+        "background: -moz-linear-gradient(left,  #00ff44 0%, #00ff44 {percent}%, #e6ff00 {percent+1}%, #e6ff00 100%);",
+        "background: -webkit-gradient(linear, left top, right top, color-stop(0%,#00ff44), color-stop({percent}%,#00ff44), color-stop({percent+1}%,#e6ff00), color-stop(100%,#e6ff00));",
+        "background: -webkit-linear-gradient(left,  #00ff44 0%,#00ff44 {percent}%,#e6ff00 {percent+1}%,#e6ff00 100%);",
+        "background: -o-linear-gradient(left,  #00ff44 0%,#00ff44 {percent}%,#e6ff00 {percent+1}%,#e6ff00 100%);",
+        "background: -ms-linear-gradient(left,  #00ff44 0%,#00ff44 {percent}%,#e6ff00 {percent+1}%,#e6ff00 100%);",
+        "background: linear-gradient(to right,  #00ff44 0%,#00ff44 {percent}%,#e6ff00 {percent+1}%,#e6ff00 100%);",
+        "filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ff44', endColorstr='#e6ff00',GradientType=1 );",
+        {
+            compiled: true
+        }
+    );
 
     Ext.tip.QuickTipManager.init();
 
@@ -84,32 +114,137 @@ Ext.onReady(function(){
     });
 
     var vmStore = Ext.create('Ext.data.Store', {
-        fields: ['state', 'name'],
+        fields: ['status', 'name'],
         data : [
-            {"state":"OFF", "name":"Test VM 1", "oldstate":"OFF"},
-            {"state":"BUILD", "name":"Test VM 2", "oldstate":"BUILD"},
-            {"state":"ON", "name":"Test VM 3", "oldstate":"ON"},
-            {"state":"PAY", "name":"Test VM 4", "oldstate":"PAY"},
-            {"state":"ENDING", "name":"Test VM 5", "oldstate":"ENDING"},
-            {"state":"RELOAD", "name":"Test VM 6", "oldstate":"RELOAD"},
-            {"state":"PAUSE", "name":"Test VM 7", "oldstate":"PAUSE"}        
+            {"status":"OFF", "name":"Test VM 1", "oldstatus":"OFF", 'ip' : '127.255.255.255', 
+                'os': 'MS Windows 2008 R2 Rus <br> with MS SQL Server Standart', 
+                'config': {
+                    cpu: 4,
+                    memory: 8192,
+                    disks: [
+                        {
+                            "type": "SAS",
+                            size: 20
+                        },
+                        {
+                            "type": "SATA",
+                            size: 100
+                        }
+                    ]
+                }},
+            {"status":"BUILD", 'persent' : '54', "name":"Test VM 2", "oldstatus":"BUILD", 'ip' : '127.255.255.255', 
+                'os': 'MS Windows 2008 R2 Rus <br> with MS SQL Server Standart', 
+                'config': {
+                    cpu: 4,
+                    memory: 8192,
+                    disks: [
+                        {
+                            "type": "SAS",
+                            size: 20
+                        },
+                        {
+                            "type": "SATA",
+                            size: 100
+                        }
+                    ]
+                }},
+            {"status":"ON", "name":"Test VM 3", "oldstatus":"ON", 'ip' : '127.255.255.255', 
+                'os': 'MS Windows 2008 R2 Rus <br> with MS SQL Server Standart', 
+                'config': {
+                    cpu: 4,
+                    memory: 8192,
+                    disks: [
+                        {
+                            "type": "SAS",
+                            size: 20
+                        },
+                        {
+                            "type": "SATA",
+                            size: 100
+                        }
+                    ]
+                }},
+            {"status":"PAY", "name":"Test VM 4", "oldstatus":"PAY", 'ip' : '127.255.255.255', 
+                'os': 'MS Windows 2008 R2 Rus <br> with MS SQL Server Standart', 
+                'config': {
+                    cpu: 4,
+                    memory: 8192,
+                    disks: [
+                        {
+                            "type": "SAS",
+                            size: 20
+                        },
+                        {
+                            "type": "SATA",
+                            size: 100
+                        }
+                    ]
+                }},
+            {"status":"ENDING", "name":"Test VM 5", "oldstatus":"ENDING", 'ip' : '127.255.255.255', 
+                'os': 'MS Windows 2008 R2 Rus <br> with MS SQL Server Standart', 
+                'config': {
+                    cpu: 4,
+                    memory: 8192,
+                    disks: [
+                        {
+                            "type": "SAS",
+                            size: 20
+                        },
+                        {
+                            "type": "SATA",
+                            size: 100
+                        }
+                    ]
+                }},
+            {"status":"RELOAD", "name":"Test VM 6", "oldstatus":"RELOAD", 'ip' : '127.255.255.255', 
+                'os': 'MS Windows 2008 R2 Rus <br> with MS SQL Server Standart', 
+                'config': {
+                    cpu: 4,
+                    memory: 8192,
+                    disks: [
+                        {
+                            "type": "SAS",
+                            size: 20
+                        },
+                        {
+                            "type": "SATA",
+                            size: 100
+                        }
+                    ]
+                }},
+            {"status":"PAUSE", "name":"Test VM 7", "oldstatus":"PAUSE", 'ip' : '127.255.255.255', 
+                'os': 'MS Windows 2008 R2 Rus <br> with MS SQL Server Standart', 
+                'config': {
+                    cpu: 4,
+                    memory: 8192,
+                    disks: [
+                        {
+                            "type": "SAS",
+                            size: 20
+                        },
+                        {
+                            "type": "SATA",
+                            size: 100
+                        }
+                    ]
+                }}        
 
         ]
     });
 
     var snapshotStore = Ext.create('Ext.data.Store', {
-        fields: ['state', 'name', 'date-time'],
+        fields: ['status', 'name', 'date-time'],
         data : [
-            {"state":"VALID", "name":"Test VM 1", "date_time": "2014-12-02 10:15:12"},
-            {"state":"VALID", "name":"Test VM 2", "date_time": "2014-12-02 10:15:12"}
+            {"status":"VALID", "name":"Test VM 1", "date_time": "2014-12-02 10:15:12"},
+            {"status":"VALID", "name":"Test VM 2", "date_time": "2014-12-02 10:15:12"}
         ]
     });
 
     var vpnStore = Ext.create('Ext.data.Store', {
-        fields: ['state', 'name'],
+        fields: ['status', 'name'],
         data : [
-            {"state":"BUILD", "name":"VPN-test 1"},
-            {"state":"ON", "name":"VPN-test 2"}
+            {"status":"BUILD", "name":"VPN-test 1"},
+            {"status":"ON", "name":"VPN-test 2"}
         ]
     });
 
@@ -268,6 +403,38 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('snapshotContainer').show();
                 mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();
+            }
+        },{
+            xtype: 'button',
+            padding: '10 10 10 10',
+            margin: '10 0 10 0',
+            width: 280,
+            text: 'Firewall',
+            handler: function() {
+                mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
+                mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();
+                // mainViewport.getComponent('centerReg').getComponent('firewallContainer').show();
+            }
+        },{
+            xtype: 'button',
+            padding: '10 10 10 10',
+            margin: '10 0 10 0',
+            width: 280,
+            text: 'ISO images',
+            handler: function() {
+                mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
+                mainViewport.getComponent('centerReg').getComponent('vpnContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();
+                // mainViewport.getComponent('centerReg').getComponent('isoContainer').show();
             }
         },{
             xtype: 'button',
@@ -1214,7 +1381,7 @@ Ext.define('numberSliderRAM', {
         Ext.apply(this, {
             layout: 'fit',
             scrollable: true,
-            width: 800,
+            width: 1000,
             renderTo: Ext.getBody(),
             border: 1,
             items: [
@@ -1240,23 +1407,32 @@ Ext.define('numberSliderRAM', {
                     handler: function() {
                         var grid = mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid');
                         var sel = grid.getSelectionModel().getSelection();
-                        if (sel[0].data.state == 'ON' || sel[0].data.state == 'ENDING'){
-                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to turn ' + sel[0].data.name + ' off?', function(btn){
-                                if (btn == 'yes'){
-                                    sel[0].set('state', 'OFF');
-                                } 
-                            }, this);     
-                        } else if (sel[0].data.state == 'OFF'){
-                            Ext.MessageBox.confirm('Confirm', 'Are you sure you want to turn ' + sel[0].data.name + ' on?', function(btn){
-                                if (btn == 'yes'){
-                                    if (sel[0].data.oldstate != 'OFF')
-                                        sel[0].set('state', sel[0].data.oldstate)
-                                    else sel[0].set('state', 'ON')
+                        var l = sel.length;
+                        for (i = 0; i < l; i++){
+                            var s = sel[i];
+                            console.log(i, s.data.status);
+                            if (s.data.status == 'ON' || s.data.status == 'ENDING'){
+                                Ext.MessageBox.confirm('Confirm', 'Are you sure you want to turn ' + s.data.name + ' off?', function(btn){
+                                    if (btn == 'yes'){
+                                        s.set('status', 'OFF');
+                                console.log('OFF!');
+                                    } 
+                                }, this);  
+                            } else if (s.data.status == 'OFF'){
+                                Ext.MessageBox.confirm('Confirm', 'Are you sure you want to turn ' + s.data.name + ' on?', function(btn){
+                                    if (btn == 'yes'){
+                                    //     // console.log("!!!  ",i);
+                                        if (s.data.oldstatus != 'OFF')
+                                            s.set('status', s.data.oldstatus)
+                                        else s.set('status', 'ON')
+                                console.log('ON!');
 
-                                } 
-                            }, this);    
-                        } else {
-                            Ext.Msg.alert('Sorry', 'You cannot turn ' + sel[0].data.name + ' on or off.');
+                                    } 
+                                }, this); 
+                            } else {
+                                Ext.Msg.alert('Sorry', 'You cannot turn ' + s.data.name + ' on or off.');
+                            }
+                        // console.log(i);
                         }
 
                     }
@@ -1267,18 +1443,18 @@ Ext.define('numberSliderRAM', {
                     handler: function() {
                         var grid = mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid');
                         var sel = grid.getSelectionModel().getSelection();
-                        if (sel[0].data.state == 'ON' || sel[0].data.state == 'ENDING'){
+                        if (sel[0].data.status == 'ON' || sel[0].data.status == 'ENDING'){
                             Ext.MessageBox.confirm('Confirm', 'Are you sure you want pause ' + sel[0].data.name + '?', function(btn){
                                 if (btn == 'yes'){
-                                    sel[0].set('state', 'PAUSE');
+                                    sel[0].set('status', 'PAUSE');
                                 } 
                             }, this);     
-                        } else if (sel[0].data.state == 'PAUSE'){
+                        } else if (sel[0].data.status == 'PAUSE'){
                             Ext.MessageBox.confirm('Confirm', 'Are you sure you want to resume ' + sel[0].data.name + '?', function(btn){
                                 if (btn == 'yes'){
-                                    if (sel[0].data.oldstate != 'PAUSE')
-                                        sel[0].set('state', sel[0].data.oldstate)
-                                    else sel[0].set('state', 'ON')
+                                    if (sel[0].data.oldstatus != 'PAUSE')
+                                        sel[0].set('status', sel[0].data.oldstatus)
+                                    else sel[0].set('status', 'ON')
 
                                 } 
                             }, this);    
@@ -1295,8 +1471,8 @@ Ext.define('numberSliderRAM', {
                         var grid = mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('virtservgrid');
                         var sel = grid.getSelectionModel().getSelection();
                         Ext.MessageBox.confirm('Confirm', 'Are you sure you want restart ' + sel[0].data.name + ' ?', function(btn){
-                            if (btn == 'yes' && (sel[0].data.state == 'ON' || sel[0].data.state == 'ENDING')){
-                                sel[0].set('state', 'RELOAD');
+                            if (btn == 'yes' && (sel[0].data.status == 'ON' || sel[0].data.status == 'ENDING')){
+                                sel[0].set('status', 'RELOAD');
                             } 
                         }, this);     
                     }
@@ -1339,19 +1515,52 @@ Ext.define('numberSliderRAM', {
                 createForm,
             { 
                xtype: 'grid',
-               width: 400,
-               hideHeaders: true,
+               width: 700,
                store: vmStore,
+               // selType: 'checkboxmodel',
+               selModel: Ext.create('Ext.selection.CheckboxModel', {
+                    mode: 'SIMPLE'
+                }),
                itemId: 'virtservgrid',
                columns: [{
-                    dataIndex: 'state',
+                    dataIndex: 'status',
+                    text: 'Status',
                     renderer: function(value,metaData){
-                        metaData.style = 'background:' + STATUS_COLORS[value];
-                        return value;
+                        // metaData.style = 'height:100%;'
+                        if (value == 'BUILD') {
+                            var percent = Math.round(Math.random()*50)+25;
+                            metaData.tdStyle = BUILD_GRADIENT.apply({percent: percent});
+                            // return value + " " + percent + "%";
+                            return Ext.String.format("{0} {1}%", value, percent);
+                        }
+                        else 
+                        {
+
+                            metaData.tdStyle = 'background:' + STATUS_COLORS[value];
+                            return value;
+                        }
                     }
                 },{
                     dataIndex: 'name', 
+                    text: 'Name',
                     flex: 0.5
+                },{
+                    dataIndex: 'ip', 
+                    text: 'Public IP',
+                    flex: 0.4
+                },{
+                    dataIndex: 'config', 
+                    text: 'Configuration',
+                    flex: 0.5,
+                    renderer: function(value, metaData){
+                        console.log(value);
+                        return Ext.String.format("vCPU: {0}<br>vRAM: {1}", value.cpu, value.memory);
+                        // return Ext.String.format("vCPU: {0}<br>vRAM: {1}", "<tpl for='disks'>", "<br>vHDD: {size}Gb {type}",'</tpl>' , value.cpu, value.memory);
+                    }
+                },{
+                    dataIndex: 'os', 
+                    text: 'Operating System',
+                    flex: 0.8
                 }
                ],
             }
@@ -1414,7 +1623,7 @@ Ext.define('numberSliderRAM', {
                hideHeaders: true,
                store: vpnStore,
                columns: [{
-                    dataIndex: 'state',
+                    dataIndex: 'status',
                     renderer: function(value, metaData){
                         switch(value){
                             case 'BUILD':
@@ -1476,20 +1685,22 @@ Ext.define('numberSliderRAM', {
                             store.loadData(store.test_data.slice(0, page_size));
                         }
                     }
-                },{
-                    xtype: 'button',
-                    margin: '10 0 0 610',
-                    text: 'Clear',
-                    handler: function() {
-                        var grid = mainViewport.getComponent('centerReg').getComponent('historyContainer').getComponent('historygrid');
-                        console.log(grid.getStore());
-                        Ext.MessageBox.confirm('Confirm', 'You are going to clear all items. Do you accept?', function(btn){
-                            if (btn == 'yes'){
-                                grid.getStore().removeAll()
-                            } 
-                        }, this); 
-                    }
-                }]
+                }
+                // ,{
+                //     xtype: 'button',
+                //     margin: '10 0 0 610',
+                //     text: 'Clear',
+                //     handler: function() {
+                //         var grid = mainViewport.getComponent('centerReg').getComponent('historyContainer').getComponent('historygrid');
+                //         console.log(grid.getStore());
+                //         Ext.MessageBox.confirm('Confirm', 'You are going to clear all items. Do you accept?', function(btn){
+                //             if (btn == 'yes'){
+                //                 grid.getStore().removeAll()
+                //             } 
+                //         }, this); 
+                //     }
+                // }
+                ]
             },{
                xtype: 'grid',
                width: 800,
@@ -1549,7 +1760,7 @@ Ext.define('numberSliderRAM', {
                     handler: function() {
                         var grid = mainViewport.getComponent('centerReg').getComponent('snapshotContainer').getComponent('snapshotgrid');
                         var sel = grid.getSelectionModel().getSelection();
-                        if (sel[0].data.state == 'VALID'){
+                        if (sel[0].data.status == 'VALID'){
                             Ext.MessageBox.confirm('Confirm', 'You are going to restore "' + sel[0].data.name + '" from snapshot. Do you accept that?', function(btn){
                                 if (btn == 'yes'){
                                     //restore VM
@@ -1579,7 +1790,7 @@ Ext.define('numberSliderRAM', {
                hideHeaders: true,
                store: snapshotStore,
                columns: [{
-                    dataIndex: 'state',
+                    dataIndex: 'status',
                     renderer: function(value,metaData){
                         switch(value){
                             case 'VALID':
