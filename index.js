@@ -132,7 +132,7 @@ Ext.onReady(function(){
                         }
                     ]
                 }},
-            {"status":"BUILD", 'persent' : '54', "name":"Test VM 2", "oldstatus":"BUILD", 'ip' : '127.255.255.255', 
+            {"status":"BUILD", 'percent' : '54', "name":"Test VM 2", "oldstatus":"BUILD", 'ip' : '127.255.255.255', 
                 'os': 'MS Windows 2008 R2 Rus <br> with MS SQL Server Standart', 
                 'config': {
                     cpu: 4,
@@ -235,8 +235,8 @@ Ext.onReady(function(){
     var snapshotStore = Ext.create('Ext.data.Store', {
         fields: ['status', 'name', 'date-time'],
         data : [
-            {"status":"VALID", "name":"Test VM 1", "date_time": "2014-12-02 10:15:12"},
-            {"status":"VALID", "name":"Test VM 2", "date_time": "2014-12-02 10:15:12"}
+            {"status":"VALID", "server":"Test VM 1", "date_time": "2014-12-02 10:15:12", 'name': 'snap01'},
+            {"status":"BUILD", "percent" : '75', "server":"Test VM 2", "date_time": "2014-12-02 10:15:12", 'name': 'snap02'}
         ]
     });
 
@@ -378,22 +378,6 @@ Ext.onReady(function(){
             padding: '10 10 10 10',
             margin: '10 0 10 0',
             width: 280,
-            text: 'VPNs',
-            handler: function() {
-                mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
-                mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
-                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
-                mainViewport.getComponent('centerReg').getComponent('vpnContainer').show();
-                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
-                mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
-                mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();
-
-            }
-        },{
-            xtype: 'button',
-            padding: '10 10 10 10',
-            margin: '10 0 10 0',
-            width: 280,
             text: 'Snapshots',
             handler: function() {
                 mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
@@ -441,6 +425,22 @@ Ext.onReady(function(){
             padding: '10 10 10 10',
             margin: '10 0 10 0',
             width: 280,
+            text: 'VPNs',
+            handler: function() {
+                mainViewport.getComponent('centerReg').getComponent('homeContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('virtServContainer').getComponent('createForm').hide();
+                mainViewport.getComponent('centerReg').getComponent('vpnContainer').show();
+                mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('historyContainer').hide();
+                mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();
+
+            }
+        },{
+            xtype: 'button',
+            padding: '10 10 10 10',
+            margin: '10 0 10 0',
+            width: 280,
             text: 'Statistics',
             handler: function() {
                 alert('You clicked the button!');
@@ -459,15 +459,6 @@ Ext.onReady(function(){
                 mainViewport.getComponent('centerReg').getComponent('snapshotContainer').hide();
                 mainViewport.getComponent('centerReg').getComponent('historyContainer').show();
                 mainViewport.getComponent('centerReg').getComponent('faqContainer').hide();            
-            }
-        },{
-            xtype: 'button',
-            padding: '10 10 10 10',
-            margin: '10 0 10 0',
-            width: 280,
-            text: 'Backups',
-            handler: function() {
-                alert('You clicked the button!');
             }
         },{
             xtype: 'button',
@@ -1374,6 +1365,14 @@ Ext.define('numberSliderRAM', {
         }
     });
 
+    var templ = new Ext.XTemplate(
+        'vCPU: {config.cpu}<br>vRAM: {config.memory}',
+        '<tpl for="config.disks">',
+            '<br>vHDD: {size} {type}',
+        '</tpl>'
+                        );
+
+
 
     Ext.define('virtServContainer',{
         extend: 'Ext.container.Container',
@@ -1527,8 +1526,9 @@ Ext.define('numberSliderRAM', {
                     text: 'Status',
                     renderer: function(value,metaData){
                         // metaData.style = 'height:100%;'
+                        // console.log(metaData.record.data.percent);
                         if (value == 'BUILD') {
-                            var percent = Math.round(Math.random()*50)+25;
+                            var percent = Math.round(metaData.record.data.percent);
                             metaData.tdStyle = BUILD_GRADIENT.apply({percent: percent});
                             // return value + " " + percent + "%";
                             return Ext.String.format("{0} {1}%", value, percent);
@@ -1551,12 +1551,14 @@ Ext.define('numberSliderRAM', {
                 },{
                     dataIndex: 'config', 
                     text: 'Configuration',
+                    xtype: 'templatecolumn',
                     flex: 0.5,
-                    renderer: function(value, metaData){
-                        console.log(value);
-                        return Ext.String.format("vCPU: {0}<br>vRAM: {1}", value.cpu, value.memory);
-                        // return Ext.String.format("vCPU: {0}<br>vRAM: {1}", "<tpl for='disks'>", "<br>vHDD: {size}Gb {type}",'</tpl>' , value.cpu, value.memory);
-                    }
+                    // renderer: function(value, metaData){
+                    //     console.log(value);
+                    //     return Ext.String.format("vCPU: {0}<br>vRAM: {1}", value.cpu, value.memory);
+                    //     // return Ext.String.format("vCPU: {0}<br>vRAM: {1}", "<tpl for='disks'>", "<br>vHDD: {size}Gb {type}",'</tpl>' , value.cpu, value.memory);
+                    // }
+                    tpl: templ
                 },{
                     dataIndex: 'os', 
                     text: 'Operating System',
@@ -1620,7 +1622,6 @@ Ext.define('numberSliderRAM', {
                xtype: 'grid',
                width: 400,
                itemId: 'vpngrid',
-               hideHeaders: true,
                store: vpnStore,
                columns: [{
                     dataIndex: 'status',
@@ -1787,24 +1788,28 @@ Ext.define('numberSliderRAM', {
                xtype: 'grid',
                width: 600,
                itemId: 'snapshotgrid',
-               hideHeaders: true,
                store: snapshotStore,
                columns: [{
                     dataIndex: 'status',
+                    text: 'Status',
                     renderer: function(value,metaData){
-                        switch(value){
-                            case 'VALID':
-                                metaData.style = 'background:' + '#00FF44'
-                                break;
+                        if (value == 'BUILD'){
+                            var percent = Math.round(metaData.record.data.percent);
+                            metaData.tdStyle = BUILD_GRADIENT.apply({percent: percent});
+                            return Ext.String.format("{0} {1}%", value, percent);
+                        } else if (value == 'VALID') {
+                             metaData.style = 'background:' + '#00FF44'
                         }
 
                         return value;
                     }
                 },{
                     dataIndex: 'name',
+                    text: 'Name',
                     flex: 1
                 },{
-                    dataIndex: 'date_time',
+                    dataIndex: 'server',
+                    text: 'Server',
                     flex: 0.5
                 }
                ],
